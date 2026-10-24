@@ -51,13 +51,14 @@ const STN = {
 // the DFDS crossings. The harbour exit follows photos taken from the deck.
 const CHANNEL = [[51.1275, 1.338], [51.1263, 1.3382], [51.1234, 1.3404], [51.1213, 1.343], [51.1157, 1.3535], [51.1146, 1.3552], [51.07, 1.65], [51.045, 2.1], [51.025, 2.165], [51.0125, 2.188]];
 
-// Non-cycling legs. `depart`/`arrive` are approximate UK times read off
+// Non-cycling legs. `offTour` marks getting to and from the start (the UK
+// trains): drawn on the map, but left out of the distances and charts. `depart`/`arrive` are approximate UK times read off
 // the gaps in the recordings; they order the day, and tracks.mjs fills
 // only the gaps *around* them with estimated riding. Train geometry is
 // routed along real railways by fetch-rail.mjs and cached in data/rail/.
 export const transfers = [
-  { id: "train-bristol-london", date: "2024-04-04", depart: "17:45", arrive: "19:43", mode: "train", name: "Bristol → London Paddington", note: "GWR into London", from: STN.bristol, to: STN.paddington, via: [] },
-  { id: "train-london-dover", date: "2024-04-04", depart: "20:30", arrive: "21:50", mode: "train", name: "St Pancras → Dover Priory", note: "Southeastern high speed to the coast", from: STN.stPancras, to: STN.doverPriory, via: [] },
+  { id: "train-bristol-london", offTour: true, date: "2024-04-04", depart: "17:45", arrive: "19:43", mode: "train", name: "Bristol → London Paddington", note: "GWR into London", from: STN.bristol, to: STN.paddington, via: [] },
+  { id: "train-london-dover", offTour: true, date: "2024-04-04", depart: "20:30", arrive: "21:50", mode: "train", name: "St Pancras → Dover Priory", note: "Southeastern high speed to the coast", from: STN.stPancras, to: STN.doverPriory, via: [] },
   { id: "ferry-dover-dunkirk", date: "2024-04-05", depart: "08:45", arrive: "10:50", mode: "ferry", name: "Dover → Dunkirk", note: "DFDS crossing (photos show it leaving Dover at 08:49)", path: [...CHANNEL, [51.00418, 2.19767]] },
   { id: "train-arnhem-utrecht", date: "2024-04-10", depart: "14:05", arrive: "14:45", mode: "train", name: "Arnhem → Utrecht", note: "Then cycled on to Breukelen and the campsite", from: STN.arnhem, to: STN.utrecht, via: [] },
   { id: "train-breukelen-utrecht", date: "2024-04-10", depart: "18:45", arrive: "19:05", mode: "train", name: "Breukelen → Utrecht", note: "Into Utrecht for food and beers", from: STN.breukelen, to: STN.utrecht, via: [] },
@@ -70,8 +71,8 @@ export const transfers = [
   { id: "ferry-maassluis-rozenburg", date: "2024-04-12", depart: "09:40", arrive: "09:58", mode: "ferry", name: "Maassluis → Rozenburg", note: "Ferry across the Nieuwe Waterweg", path: [[51.91462, 4.24921], [51.91373, 4.24878], [51.91257, 4.24795], [51.91183, 4.24726], [51.91144, 4.24633], [51.91139, 4.24464], [51.91144, 4.24312]] },
   { id: "ferry-vlissingen-breskens", date: "2024-04-13", depart: "10:50", arrive: "11:20", mode: "ferry", name: "Vlissingen → Breskens", note: "Foot and bike ferry across the Westerschelde", path: [[51.44407, 3.59713], [51.4425, 3.592], [51.42, 3.565], [51.401, 3.552], [51.39822, 3.5479]] },
   { id: "ferry-dunkirk-dover", date: "2024-04-15", depart: "10:00", arrive: "13:30", mode: "ferry", name: "Dunkirk → Dover", note: "DFDS crossing home", path: [[51.02069, 2.19231], ...[...CHANNEL].reverse()] },
-  { id: "train-dover-london", date: "2024-04-15", depart: "17:30", arrive: "18:40", mode: "train", name: "Dover Priory → St Pancras", note: "Southeastern high speed", from: STN.doverPriory, to: STN.stPancras, via: [] },
-  { id: "train-london-bristol", date: "2024-04-15", depart: "19:30", arrive: "21:10", mode: "train", name: "London Paddington → Bristol", note: "GWR home", from: STN.paddington, to: STN.bristol, via: [] },
+  { id: "train-dover-london", offTour: true, date: "2024-04-15", depart: "17:30", arrive: "18:40", mode: "train", name: "Dover Priory → St Pancras", note: "Southeastern high speed", from: STN.doverPriory, to: STN.stPancras, via: [] },
+  { id: "train-london-bristol", offTour: true, date: "2024-04-15", depart: "19:30", arrive: "21:10", mode: "train", name: "London Paddington → Bristol", note: "GWR home", from: STN.paddington, to: STN.bristol, via: [] },
 ];
 
 // Per-day headline used in the sidebar and map tooltips.

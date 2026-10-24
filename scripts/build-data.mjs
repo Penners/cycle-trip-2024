@@ -113,6 +113,10 @@ for (const track of tracks) {
   else merged.push({ date: track.date, pts: [...track.pts] });
 }
 
+// Riding entirely in the UK (Bristol, across London, the Dover hops) is
+// getting to and from the tour: drawn, but not counted, like the UK trains.
+const inUK = (pts) => pts.every((p) => p.lon < 1.6);
+
 const rides = merged.map((track, n) => {
   const pts = track.pts;
   let d = 0;
@@ -123,6 +127,7 @@ const rides = merged.map((track, n) => {
   const profile = profileFor(pts);
   return {
     kind: "ride",
+    ...(inUK(pts) ? { offTour: true } : {}),
     id: `ride-${track.date}-${merged.filter((m, i) => m.date === track.date && i < n).length + 1}`,
     date: track.date,
     start: new Date(pts[0].t).toISOString(),
@@ -171,7 +176,7 @@ const transferSegs = transfers.map((t) => {
     coords = t.path;
     km = round(pathLength(coords) / 1000, 1);
   }
-  return { kind: t.mode, id: t.id, date: t.date, start: atLocal(t.date, t.depart), end: atLocal(t.date, t.arrive), name: t.name, note: t.note, km, coords };
+  return { kind: t.mode, id: t.id, ...(t.offTour ? { offTour: true } : {}), date: t.date, start: atLocal(t.date, t.depart), end: atLocal(t.date, t.arrive), name: t.name, note: t.note, km, coords };
 });
 
 // ---------- photos ----------
@@ -218,10 +223,13 @@ const W = loadWeather();
 // ---------- assemble days ----------
 const allDates = Object.keys(dayTitles).sort();
 const days = allDates.map((date, i) => {
-  const dayRides = rides.filter((r) => r.date === date);
-  const dayTransfers = transferSegs.filter((t) => t.date === date);
+  const allRides = rides.filter((r) => r.date === date);
+  const allTransfers = transferSegs.filter((t) => t.date === date);
+  // Stats count only the tour itself, not getting to and from it.
+  const dayRides = allRides.filter((r) => !r.offTour);
+  const dayTransfers = allTransfers.filter((t) => !t.offTour);
   // Every leg is timestamped (transfers approximately), so just sort.
-  const segments = [...dayRides, ...dayTransfers].sort((a, b) => a.start.localeCompare(b.start));
+  const segments = [...allRides, ...allTransfers].sort((a, b) => a.start.localeCompare(b.start));
 
   // Day elevation profile: rides end-to-end; transfers occupy their
   // distance on the x-axis but carry no elevation.
@@ -229,7 +237,8 @@ const days = allDates.map((date, i) => {
   const profile = [];
   const bands = [];
   for (const s of segments) {
-    if (s.kind === "flight") continue; // not part of the overland profile
+    // Flights, ferries and the UK legs aren't part of the riding profile.
+    if (s.kind === "flight" || s.kind === "ferry" || s.offTour) continue;
     if (s.kind === "ride") {
       for (const [k, e, la, lo] of s.profile) profile.push([round(k + offset, 2), e, la, lo]);
     } else {
@@ -288,15 +297,15 @@ function localDiff(a, b) {
 }
 
 const totals = {
-  rideKm: round(rides.reduce((a, r) => a + r.km, 0), 1),
-  trainKm: round(transferSegs.filter((t) => t.kind === "train").reduce((a, t) => a + t.km, 0), 1),
+  rideKm: round(rides.filter((r) => !r.offTour).reduce((a, r) => a + r.km, 0), 1),
+  trainKm: round(transferSegs.filter((t) => t.kind === "train" && !t.offTour).reduce((a, t) => a + t.km, 0), 1),
   ferryKm: round(transferSegs.filter((t) => t.kind === "ferry").reduce((a, t) => a + t.km, 0), 1),
   flightKm: round(transferSegs.filter((t) => t.kind === "flight").reduce((a, t) => a + t.km, 0), 1),
-  gain: rides.reduce((a, r) => a + r.gain, 0),
-  loss: rides.reduce((a, r) => a + r.loss, 0),
+  gain: rides.filter((r) => !r.offTour).reduce((a, r) => a + r.gain, 0),
+  loss: rides.filter((r) => !r.offTour).reduce((a, r) => a + r.loss, 0),
   maxEle: Math.max(...days.map((d) => d.stats.maxEle ?? 0)),
-  movingSeconds: rides.reduce((a, r) => a + r.movingSeconds, 0),
-  ridingDays: new Set(rides.map((r) => r.date)).size,
+  movingSeconds: rides.filter((r) => !r.offTour).reduce((a, r) => a + r.movingSeconds, 0),
+  ridingDays: new Set(rides.filter((r) => !r.offTour).map((r) => r.date)).size,
   nights: stays.reduce((a, s) => a + (s.nights ?? 1), 0),
   photos: photos.length,
 };

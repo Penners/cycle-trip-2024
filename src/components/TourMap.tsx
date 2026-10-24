@@ -53,7 +53,8 @@ function photoIcon(photo: Photo) {
 
 // The flight and ferry would zoom the map out to Bristol, so the
 // overview frames only the overland route.
-const isOverland = (s: Segment) => s.kind !== "flight" && s.kind !== "ferry";
+// The UK legs (offTour) would pull the frame back to Bristol too.
+const isOverland = (s: Segment) => s.kind !== "flight" && s.kind !== "ferry" && !s.offTour;
 const allBounds = (days: Day[]) => L.latLngBounds(days.flatMap((d) => d.segments.filter(isOverland).flatMap((s) => s.coords)));
 
 const PLANE = `<svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M12 2c.8 0 1.4.9 1.4 2v5.2l7.6 4.4v2l-7.6-2.3v4.6l2.2 1.7V21L12 20l-3.6 1v-1.4l2.2-1.7v-4.6L3 15.6v-2l7.6-4.4V4c0-1.1.6-2 1.4-2z"/></svg>`;
@@ -150,6 +151,19 @@ export default function TourMap({ tour, selectedDayId, hoveredDayId, hoverPoint,
                 {seg.kind === "ride" ? `${day.title} · ${fmtKm(seg.km)} km` : `${MODE_EMOJI[seg.kind]} ${seg.name} · ${fmtKm(seg.km)} km`}
               </Tooltip>
             );
+            if (seg.offTour) {
+              // Getting to and from the tour: a light dashed line, like the 2026 flight.
+              return (
+                <Polyline
+                  key={key}
+                  positions={seg.coords}
+                  pathOptions={{ bubblingMouseEvents: false, color: COLORS.offTour, weight: 2, opacity: dimmed && !hovered ? 0.4 : 0.8, dashArray: "6 7", lineCap: "butt" }}
+                  eventHandlers={handlers}
+                >
+                  {tooltip}
+                </Polyline>
+              );
+            }
             if (seg.kind === "ride") {
               return (
                 <Fragment key={key}>

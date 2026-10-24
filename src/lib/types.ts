@@ -6,6 +6,8 @@ export type Segment =
   | {
       kind: "ride";
       id: string;
+      /** Getting to/from the tour (UK riding): drawn, not counted. */
+      offTour?: boolean;
       date: string;
       start: string;
       end: string;
@@ -19,6 +21,8 @@ export type Segment =
   | {
       kind: "train" | "ferry" | "flight";
       id: string;
+      /** Getting to/from the tour (the UK trains): drawn, not counted. */
+      offTour?: boolean;
       date: string;
       start: string;
       end: string;

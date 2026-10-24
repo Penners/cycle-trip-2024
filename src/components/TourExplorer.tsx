@@ -80,8 +80,8 @@ export default function TourExplorer({ tour, journal }: Props) {
     const photos: Photo[] = [];
     let offset = 0;
     for (const day of tour.days) {
-      if (!day.segments.some((s) => s.kind === "ride")) continue;
-      const length = day.segments.reduce((a, s) => a + (s.kind === "flight" ? 0 : s.km), 0);
+      if (!day.segments.some((s) => s.kind === "ride" && !s.offTour)) continue;
+      const length = day.segments.reduce((a, s) => a + (s.kind === "flight" || s.kind === "ferry" || s.offTour ? 0 : s.km), 0);
       if (offset > 0) dividers.push({ km: offset, label: day.title });
       for (const p of day.profile) profile.push(p ? [p[0] + offset, p[1], p[2], p[3]] : null);
       profile.push(null);
@@ -176,7 +176,7 @@ export default function TourExplorer({ tour, journal }: Props) {
                 onOpenPhoto={openPhoto}
               />
             ) : (
-              <div className="elevation-empty">No riding today.</div>
+              <div className="elevation-empty">{selectedDay.segments.some((s) => s.offTour) ? "Getting to the start: not part of the tour's charts." : "No riding today."}</div>
             )
           ) : (
             <ElevationChart
@@ -272,7 +272,7 @@ function Overview({
                       {day.stats.trainKm > 0 && <em>+{Math.round(day.stats.trainKm)} train</em>}
                     </>
                   ) : (
-                    <em>{day.segments.some((s) => s.kind === "ferry") ? "ferry" : "rest"}</em>
+                    <em>{day.segments.some((s) => s.offTour) ? "getting there" : day.segments.some((s) => s.kind === "ferry") ? "ferry" : "rest"}</em>
                   )}
                 </span>
               </button>
