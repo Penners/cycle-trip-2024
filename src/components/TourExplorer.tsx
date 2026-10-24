@@ -224,7 +224,7 @@ function Overview({
   return (
     <>
       <header className="masthead">
-        <div className="eyebrow">4 – 15 April 2024</div>
+        <div className="eyebrow">4 – 15 April 2024 · Mike, Ronaldo &amp; me</div>
         <h1>
           Flanders <span className="arrow">→</span> Holland
         </h1>

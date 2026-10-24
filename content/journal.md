@@ -1,6 +1,7 @@
 # 🚲 Tour Journal: Bristol to Flanders & Holland (April 4 – 15, 2024)
 
 ## 📌 Tour Overview
+- **Riders:** Me (Penry), Mike & Ronaldo
 - **Route:** Bristol ➔ London ➔ Dover (Train) ➔ Dunkirk (Ferry) ➔ Bruges ➔ Antwerp ➔ Diest ➔ Eindhoven ➔ Nijmegen ➔ Arnhem ➔ Utrecht (Train) ➔ Gouda ➔ Delft ➔ Zeeland ➔ Bruges ➔ Dunkirk ➔ Dover (Ferry) ➔ Bristol (Train)
 - **Data:** Recorded on a phone with Google Fit, which missed a lot of the riding. The gaps are filled with routes along cycle paths between the points that *were* recorded. "Show raw GPS" on the map shows the original recording.
 
