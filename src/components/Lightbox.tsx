@@ -20,8 +20,8 @@ type Props = {
 
 /**
  * Full-screen gallery over every photo in trip order (yet-another-react-
- * lightbox): swipe on touch, arrow keys / Esc on desktop, pinch or
- * double-click to zoom. While a photo loads, its tiny inline version sits
+ * lightbox): swipe on touch, arrow keys / Esc on desktop, pinch, scroll
+ * or double-click to zoom. While a photo loads, its tiny inline version sits
  * blurred behind it.
  */
 export default function Lightbox({ photos, index, dayLabel, onIndex, onClose }: Props) {
@@ -50,6 +50,7 @@ export default function Lightbox({ photos, index, dayLabel, onIndex, onClose }: 
       carousel={{ finite: true, preload: 2, padding: 0 }}
       controller={{ closeOnPullDown: true, closeOnBackdropClick: true }}
       captions={{ descriptionTextAlign: "center", descriptionMaxLines: 2 }}
+      zoom={{ scrollToZoom: true }}
       styles={{ container: { backgroundColor: "#0c0a08" } }}
       render={{
         slideContainer: ({ slide, children }) => {
