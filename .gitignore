@@ -20,3 +20,6 @@ next-env.d.ts
 .DS_Store
 Thumbs.db
 *.log
+
+# Third-party exports (e.g. a friend's Instagram data) stay local
+/insta/
