@@ -33,7 +33,7 @@ export default function Lightbox({ photos, index, dayLabel, onIndex, onClose }: 
         height: p.height,
         alt: p.caption,
         title: p.caption,
-        description: `${dayLabel?.(p) ? `${dayLabel(p)} · ` : ""}${fmtDate(p.date, { weekday: "short", day: "numeric", month: "short" })} · ${fmtTime(p.takenAt)} · ${i + 1} of ${photos.length}`,
+        description: `${dayLabel?.(p) ? `${dayLabel(p)} · ` : ""}${fmtDate(p.date, { weekday: "short", day: "numeric", month: "short" })} · ${fmtTime(p.takenAt)}${p.credit ? ` · Photo: ${p.credit}` : ""} · ${i + 1} of ${photos.length}`,
         blur: p.blur,
       })),
     [photos, dayLabel]

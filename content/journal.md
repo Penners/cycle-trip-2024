@@ -22,7 +22,7 @@
 ---
 
 ### **Saturday, 6 April 2024**
-* **Route:** Bruges ➔ Ghent ➔ Antwerp
+* **Route:** Bruges ➔ Kaprijke ➔ Zelzate ➔ Moerbeke ➔ Antwerp
 * **Overnight:** Airbnb, Antwerp.
 
 ---

@@ -78,7 +78,7 @@ export const transfers = [
 export const dayTitles = {
   "2024-04-04": { title: "Bristol → London → Dover", subtitle: "Two trains and a ride across London" },
   "2024-04-05": { title: "Dover → Dunkirk → Bruges", subtitle: "Ferry over, then along the Flemish coast" },
-  "2024-04-06": { title: "Bruges → Antwerp", subtitle: "Through Ghent to the Scheldt" },
+  "2024-04-06": { title: "Bruges → Antwerp", subtitle: "Via Kaprijke, Zelzate & Moerbeke to the Scheldt" },
   "2024-04-07": { title: "Antwerp → Diest", subtitle: "Into the Kempen" },
   "2024-04-08": { title: "Diest → Veldhoven", subtitle: "Over the border into the Netherlands" },
   "2024-04-09": { title: "Veldhoven → Overasselt", subtitle: "North through Brabant to the Maas" },

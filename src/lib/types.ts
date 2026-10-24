@@ -42,6 +42,8 @@ export type Photo = {
   /** Tiny inline image (data URI) shown blurred while the full photo loads. */
   blur: string;
   caption: string;
+  /** Who took it, when it isn't Penry (e.g. Mike's Instagram stories). */
+  credit?: string;
   km: number | null;
 };
 

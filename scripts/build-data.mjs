@@ -192,6 +192,7 @@ const photos = JSON.parse(fs.readFileSync("data/photos.json", "utf8"))
   thumb: `/photos/thumb/${p.id}.webp`,
   blur: p.blur,
   caption: captions[p.id]?.caption ?? "",
+  ...(p.credit ? { credit: p.credit } : {}),
 }));
 
 // ---------- raw recordings ----------
