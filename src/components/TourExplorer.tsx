@@ -111,7 +111,7 @@ export default function TourExplorer({ tour, journal }: Props) {
               onOpenPhoto={openPhoto}
             />
           ) : (
-            <Overview tour={tour} journal={journal} maxDayKm={maxDayKm} hoveredDayId={hoveredDayId} onHoverDay={setHoveredDayId} onSelectDay={selectDay} />
+            <Overview tour={tour} journal={journal} maxDayKm={maxDayKm} hoveredDayId={hoveredDayId} onHoverDay={setHoveredDayId} onSelectDay={selectDay} onOpenPhoto={openPhoto} />
           )}
         </div>
       </aside>
@@ -217,6 +217,7 @@ function Overview({
   hoveredDayId,
   onHoverDay,
   onSelectDay,
+  onOpenPhoto,
 }: {
   tour: Tour;
   journal: Journal;
@@ -224,6 +225,7 @@ function Overview({
   hoveredDayId: string | null;
   onHoverDay: (id: string | null) => void;
   onSelectDay: (id: string) => void;
+  onOpenPhoto: (p: Photo) => void;
 }) {
   const t = tour.totals;
   return (
@@ -289,6 +291,28 @@ function Overview({
       <section className="prose intro">
         <ReactMarkdown>{journal.intro}</ReactMarkdown>
       </section>
+
+      {/* Every photo, a block per day, so they can be browsed without
+          opening each day first. */}
+      <h2 className="section-title">Photos</h2>
+      {tour.days
+        .filter((day) => day.photos.length > 0)
+        .map((day) => (
+          <section key={day.id} className="photo-day">
+            <button className="photo-day-head" onClick={() => onSelectDay(day.id)}>
+              <span className="day-date">Day {day.index} · {fmtDate(day.date)}</span>
+              <span className="photo-day-title">{day.title}</span>
+            </button>
+            <div className="photo-grid">
+              {day.photos.map((p) => (
+                <button key={p.id} className={`photo-tile ${p.kind === "pano" ? "is-pano" : ""}`} onClick={() => onOpenPhoto(p)} title={p.caption}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={p.thumb} alt={p.caption || `Photo taken ${fmtTime(p.takenAt)}`} loading="lazy" />
+                </button>
+              ))}
+            </div>
+          </section>
+        ))}
     </>
   );
 }

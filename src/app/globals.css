@@ -426,6 +426,30 @@ button {
   color: var(--ink-2);
 }
 
+.photo-day {
+  margin: 0 0 14px;
+}
+.photo-day-head {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+}
+.photo-day-title {
+  font-weight: 600;
+  font-size: 14px;
+}
+.photo-day-head:hover .photo-day-title {
+  color: var(--accent);
+}
+.photo-day .photo-grid {
+  margin-top: 6px;
+}
 .photo-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
