@@ -24,7 +24,7 @@ The rides were recorded with Google Fit on a phone and exported from Google Take
 1. It parses every *Biking* activity (Google splits a recording into Biking and Walking activities) and drops spikes.
 2. It treats any two consecutive fixes more than 250 m apart as a *jump* and re-routes them along real cycle paths with [BRouter](https://brouter.de) (trekking profile), using the recorded fixes as waypoints.
 3. It builds each day as a time-ordered chain of last night's stay → rides → trains and ferries → tonight's stay. Any gap between one link's end and the next one's start must have been cycled, so it becomes an **unrecorded ride**, routed the same way. A gap over 20 km is reported, not guessed: it usually means a train or ferry is missing from the config.
-4. Recorded stretches and routed fill-ins are joined into one continuous ride for each run of riding between trains and ferries. The site draws them as a single route. To see what was actually recorded, turn on **Show raw GPS** on the map.
+4. Recorded stretches and routed fill-ins are joined into one continuous ride for each run of riding between trains and ferries. The site draws them as a single route. To see what was actually recorded, run `npm run dev` and turn on **Show raw GPS** on the map (it's dev-only: the public site neither shows the button nor ships the raw data).
 
 If BRouter's answer is a silly detour (more than 3× the straight-line distance), the build falls back to the straight line.
 
@@ -50,7 +50,7 @@ content/journal.md ─► read at build time, split into days
 
 ## Correcting a guess
 
-The routed fill-ins are only as good as what the config knows. If part of a route is wrong (compare it against **Show raw GPS**):
+The routed fill-ins are only as good as what the config knows. If part of a route is wrong (compare it against **Show raw GPS** under `npm run dev`):
 
 - **It was a train or ferry, not a ride:** add it to `transfers` with `depart`/`arrive` times. The gap around it is then routed to and from the station or port instead.
 - **It took the wrong road:** the fastest fix is a photo taken along the way. Otherwise, add an intermediate waypoint (ask an assistant to add `via` support for bridges in `tracks.mjs`).
@@ -81,7 +81,7 @@ Copy the phone photos into `photos/` (git-ignored) and run `npm run data:photos`
 - **Location:** taken from EXIF GPS. A photo without GPS is placed where the track was when it was taken, from rides, walks or the routed fill-ins.
 - **Videos:** the two `.mp4` clips are ignored, as the site only shows stills.
 
-Photos are the best evidence for checking the routed fill-ins, since a photo far from its day's line means the guess went the wrong way. The **Show raw GPS** toggle on the map overlays exactly what the phone recorded: a thin purple line through every fix, walks dotted, and a dot with its time at either end of every jump.
+Photos are the best evidence for checking the routed fill-ins, since a photo far from its day's line means the guess went the wrong way. Under `npm run dev`, the **Show raw GPS** toggle on the map overlays exactly what the phone recorded: a thin purple line through every fix, walks dotted, and a dot with its time at either end of every jump.
 
 ## Basemaps
 

@@ -137,17 +137,22 @@ export default function TourExplorer({ tour, journal }: Props) {
             </svg>
             {showPhotos ? "Hide photos" : `Show ${allPhotos.length} photos`}
           </button>
-          <button
-            className={`map-toggle ${showRaw ? "is-on" : ""}`}
-            onClick={() => setShowRaw((v) => !v)}
-            aria-pressed={showRaw}
-            title="Overlay exactly what the phone recorded"
-          >
-            <span className="sw sw-raw" aria-hidden />
-            {showRaw ? "Hide raw GPS" : "Show raw GPS"}
-          </button>
+          {/* The raw recording is only useful for checking the routes, so the
+              toggle only exists under `next dev` (the data isn't shipped
+              to the public site either; see page.tsx). */}
+          {process.env.NODE_ENV === "development" && (
+            <button
+              className={`map-toggle ${showRaw ? "is-on" : ""}`}
+              onClick={() => setShowRaw((v) => !v)}
+              aria-pressed={showRaw}
+              title="Overlay exactly what the phone recorded"
+            >
+              <span className="sw sw-raw" aria-hidden />
+              {showRaw ? "Hide raw GPS" : "Show raw GPS"}
+            </button>
+          )}
           </div>
-          <Legend />
+          <Legend showRaw={showRaw} />
         </div>
         <div className="elevation-panel">
           <div className="elevation-head">
@@ -455,15 +460,17 @@ function Stat({ label, value, unit }: { label: string; value: string; unit: stri
   );
 }
 
-function Legend() {
+function Legend({ showRaw }: { showRaw: boolean }) {
   return (
     <div className="legend" aria-label="Map legend">
       <span className="legend-item">
         <span className="sw sw-ride" /> Ride
       </span>
-      <span className="legend-item">
-        <span className="sw sw-raw" /> Raw GPS
-      </span>
+      {showRaw && (
+        <span className="legend-item">
+          <span className="sw sw-raw" /> Raw GPS
+        </span>
+      )}
       <span className="legend-item">
         <span className="sw sw-train" /> Train
       </span>
