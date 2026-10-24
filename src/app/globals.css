@@ -1,3 +1,863 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+:root {
+  color-scheme: light;
+  --bg: #f6f2ea;
+  --surface: #fffdf8;
+  --surface-2: #efe9dd;
+  --ink: #1f1b17;
+  --ink-2: #5b534a;
+  --ink-3: #8a8177;
+  --line: #e2dacb;
+  --accent: #e8590c;
+  --accent-wash: rgba(232, 89, 12, 0.12);
+  --rail: #2b2724;
+  --ferry: #1971c2;
+  --grid: #e7e0d3;
+  --shadow: 0 1px 2px rgba(31, 27, 23, 0.06), 0 6px 24px rgba(31, 27, 23, 0.08);
+  --radius: 12px;
+  --sidebar-w: 440px;
+  --elev-h: 190px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #181614;
+    --surface: #211e1b;
+    --surface-2: #2a2622;
+    --ink: #f1ece4;
+    --ink-2: #c4bbb0;
+    --ink-3: #8f867c;
+    --line: #36312b;
+    --accent: #f76707;
+    --accent-wash: rgba(247, 103, 7, 0.16);
+    --rail: #e9e3da;
+    --ferry: #4dabf7;
+    --grid: #2f2a25;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 6px 24px rgba(0, 0, 0, 0.35);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #181614;
+  --surface: #211e1b;
+  --surface-2: #2a2622;
+  --ink: #f1ece4;
+  --ink-2: #c4bbb0;
+  --ink-3: #8f867c;
+  --line: #36312b;
+  --accent: #f76707;
+  --accent-wash: rgba(247, 103, 7, 0.16);
+  --rail: #e9e3da;
+  --ferry: #4dabf7;
+  --grid: #2f2a25;
+}
+
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+button {
+  font: inherit;
+  color: inherit;
+}
+
+/* ---------- layout ---------- */
+.app {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  height: 100dvh;
+  overflow: hidden;
+}
+.sidebar {
+  border-right: 1px solid var(--line);
+  background: var(--bg);
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.sidebar-scroll {
+  overflow-y: auto;
+  padding: 28px 28px 48px;
+  flex: 1;
+}
+.map-column {
+  display: grid;
+  grid-template-rows: 1fr var(--elev-h);
+  min-width: 0;
+  min-height: 0;
+}
+.map-wrap {
+  position: relative;
+  min-height: 0;
+}
+.tour-map {
+  height: 100%;
+  width: 100%;
+  background: var(--surface-2);
+}
+.map-loading {
+  display: grid;
+  place-items: center;
+  color: var(--ink-3);
+}
+
+/* Phones: one scrolling page — map and elevation on top, the write-up,
+   stats and photos below in normal flow. */
+@media (max-width: 900px) {
+  .app {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    overflow: visible;
+  }
+  .map-column {
+    order: -1;
+    grid-template-rows: 55svh 132px;
+    border-bottom: 1px solid var(--line);
+  }
+  .sidebar {
+    border-right: 0;
+  }
+  .sidebar-scroll {
+    padding: 20px 16px 48px;
+    overflow: visible;
+  }
+  /* A vertical swipe on the chart scrolls the page; horizontal drags
+     still scrub the profile. */
+  .elevation svg {
+    touch-action: pan-y !important;
+  }
+  .masthead h1 {
+    font-size: 34px;
+  }
+  .masthead.small h1 {
+    font-size: 26px;
+  }
+  .day-nav {
+    margin-bottom: 10px;
+  }
+  .elevation-panel {
+    padding: 6px 8px 2px;
+  }
+  .elevation-head .eyebrow {
+    display: none;
+  }
+  .elevation-title {
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .elevation-back {
+    flex: none;
+  }
+}
+
+/* ---------- type ---------- */
+.eyebrow {
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: 600;
+}
+.masthead h1 {
+  font-family: var(--font-display), Georgia, serif;
+  font-weight: 600;
+  font-size: 44px;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  margin: 8px 0 10px;
+  font-variation-settings: "SOFT" 50, "opsz" 96;
+}
+.masthead.small h1 {
+  font-size: 30px;
+  line-height: 1.1;
+}
+.masthead .arrow {
+  color: var(--accent);
+}
+.lede {
+  color: var(--ink-2);
+  margin: 0 0 22px;
+  font-size: 16px;
+}
+.section-title {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 20px;
+  font-weight: 600;
+  margin: 28px 0 8px;
+}
+
+/* ---------- stats ---------- */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin: 0 0 8px;
+}
+.stat {
+  background: var(--surface);
+  padding: 12px 14px;
+}
+.stat dt {
+  font-size: 11.5px;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+.stat dd {
+  margin: 2px 0 0;
+  font-size: 22px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+.stat .unit {
+  font-size: 13px;
+  color: var(--ink-2);
+  font-weight: 500;
+}
+
+/* ---------- day list ---------- */
+.day-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.day-row {
+  display: grid;
+  grid-template-columns: 30px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 11px 6px;
+  cursor: pointer;
+  border-radius: 0;
+}
+.day-row:hover,
+.day-row.is-hovered {
+  background: var(--accent-wash);
+}
+.day-num {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 20px;
+  color: var(--ink-3);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.day-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.day-date {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+.day-title {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.day-bar {
+  display: flex;
+  gap: 2px;
+  height: 4px;
+  margin-top: 6px;
+}
+.bar-ride {
+  background: var(--accent);
+  border-radius: 2px;
+}
+.bar-train {
+  border-radius: 2px;
+  background: repeating-linear-gradient(90deg, var(--rail) 0 4px, transparent 4px 7px);
+  opacity: 0.7;
+}
+.day-km {
+  text-align: right;
+  font-size: 13px;
+  color: var(--ink-2);
+  display: flex;
+  flex-direction: column;
+  font-variant-numeric: tabular-nums;
+}
+.day-km strong {
+  font-size: 16px;
+  color: var(--ink);
+}
+.day-km em {
+  font-style: normal;
+  font-size: 11.5px;
+  color: var(--ink-3);
+}
+
+/* ---------- day detail ---------- */
+.day-nav,
+.day-footer-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.day-nav {
+  margin-bottom: 18px;
+}
+.day-footer-nav {
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+}
+.link-btn {
+  background: none;
+  border: 0;
+  padding: 4px 0;
+  color: var(--accent);
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+}
+.link-btn:hover {
+  text-decoration: underline;
+}
+.day-nav-arrows {
+  display: flex;
+  gap: 6px;
+}
+.icon-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+.icon-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.legs {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0;
+  display: grid;
+  gap: 6px;
+}
+.leg {
+  display: grid;
+  grid-template-columns: 22px 1fr auto auto;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+  padding: 8px 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.leg-swatch {
+  height: 4px;
+  border-radius: 2px;
+}
+.leg-ride .leg-swatch {
+  background: var(--accent);
+}
+.leg-train .leg-swatch {
+  background: repeating-linear-gradient(90deg, var(--rail) 0 4px, transparent 4px 7px);
+  height: 5px;
+}
+.leg-ferry .leg-swatch {
+  background: radial-gradient(circle, var(--ferry) 1.6px, transparent 2px) 0 50% / 6px 6px repeat-x;
+  height: 6px;
+}
+.leg-flight .leg-swatch {
+  background: repeating-linear-gradient(90deg, #5f3dc4 0 6px, transparent 6px 10px);
+  height: 2px;
+}
+.leg-km {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+.leg-link {
+  font-size: 12px;
+  color: var(--ink-3);
+  text-decoration: none;
+}
+.leg-link:hover {
+  color: #fc4c02;
+}
+.stay-card {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 14px;
+  border-left: 3px solid var(--accent);
+  background: var(--surface);
+  border-radius: 0 10px 10px 0;
+  margin: 16px 0;
+  font-size: 14px;
+}
+.stay-card span:last-child {
+  color: var(--ink-2);
+}
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  margin: 16px 0 8px;
+}
+.photo-tile {
+  position: relative;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: zoom-in;
+  background: var(--surface-2);
+}
+.photo-tile.is-pano {
+  grid-column: span 2;
+  aspect-ratio: 2 / 1;
+}
+.photo-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+.photo-tile:hover img {
+  transform: scale(1.05);
+}
+.photo-time {
+  position: absolute;
+  left: 4px;
+  bottom: 4px;
+  font-size: 10.5px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- prose ---------- */
+.prose {
+  font-size: 15px;
+  color: var(--ink);
+}
+.prose ul {
+  padding: 0;
+  list-style: none;
+  margin: 16px 0;
+}
+.prose li {
+  margin: 0 0 14px;
+}
+.prose strong {
+  font-weight: 650;
+}
+.prose em {
+  color: var(--ink-2);
+}
+.prose.intro {
+  margin-top: 28px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+  font-size: 14px;
+  color: var(--ink-2);
+}
+
+/* ---------- elevation ---------- */
+.elevation-panel {
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 10px 12px 4px;
+}
+.elevation-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 0 4px 2px;
+}
+.elevation-back {
+  margin-left: auto;
+  padding: 3px 11px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--ink-2);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.elevation-back:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.elevation-title {
+  font-size: 13px;
+  color: var(--ink-2);
+  font-weight: 500;
+}
+.elevation {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.elevation svg {
+  display: block;
+  position: absolute;
+  inset: 0;
+}
+.elevation .grid {
+  stroke: var(--grid);
+  stroke-width: 1;
+}
+.elevation .axis {
+  font-size: 11px;
+  fill: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.elevation .area {
+  fill: var(--accent);
+  fill-opacity: 0.12;
+}
+.elevation .line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+.elevation .hatch-line {
+  stroke: var(--rail);
+  stroke-opacity: 0.22;
+}
+.elevation .band-label {
+  font-size: 11px;
+  fill: var(--ink-2);
+  font-weight: 600;
+}
+.elevation .divider {
+  stroke: var(--line);
+  stroke-width: 1;
+}
+.elevation .crosshair {
+  stroke: var(--ink);
+  stroke-width: 1;
+  stroke-opacity: 0.5;
+}
+.elevation .crosshair-dot {
+  fill: var(--ink);
+  stroke: var(--surface);
+  stroke-width: 2;
+}
+.elevation .photo-dot {
+  fill: var(--surface);
+  stroke: var(--ink);
+  stroke-width: 1.5;
+  cursor: zoom-in;
+}
+.elevation .photo-dot:hover {
+  fill: var(--accent);
+}
+.elevation-empty {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  color: var(--ink-3);
+  font-style: italic;
+}
+.chart-reset {
+  position: absolute;
+  right: 4px;
+  bottom: 30px;
+  padding: 3px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink-2);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+}
+.chart-reset:hover {
+  color: var(--accent);
+}
+.elevation svg.is-zoomed:active {
+  cursor: grabbing !important;
+}
+.chart-tip {
+  position: absolute;
+  top: 0;
+  pointer-events: none;
+  background: var(--ink);
+  color: var(--bg);
+  border-radius: 8px;
+  padding: 4px 9px;
+  font-size: 12px;
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  white-space: nowrap;
+  box-shadow: var(--shadow);
+}
+.chart-tip .tip-day {
+  opacity: 0.75;
+}
+
+/* ---------- map chrome ---------- */
+.weather-card {
+  margin: 0 0 18px;
+}
+.weather-card .eyebrow {
+  display: block;
+  margin-bottom: 8px;
+}
+.weather-card .stats {
+  margin-bottom: 6px;
+}
+.weather-note {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-3);
+}
+.map-toggles {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 500;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.map-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 13px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink-2);
+  box-shadow: var(--shadow);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.map-toggle.is-on {
+  color: var(--ink);
+}
+.map-toggle:hover {
+  color: var(--accent);
+}
+.leaflet-tooltip.photo-tooltip {
+  padding: 4px;
+  border-radius: 8px;
+  width: 128px;
+  white-space: normal;
+}
+.photo-tooltip img {
+  display: block;
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+.photo-tooltip span {
+  display: block;
+  font-size: 11.5px;
+  line-height: 1.3;
+  padding: 5px 2px 1px;
+}
+.legend {
+  position: absolute;
+  left: 12px;
+  bottom: 24px;
+  z-index: 500;
+  display: flex;
+  gap: 14px;
+  padding: 7px 12px;
+  background: var(--surface);
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+  font-size: 12px;
+  color: var(--ink-2);
+}
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.sw {
+  display: inline-block;
+  width: 20px;
+  height: 4px;
+  border-radius: 2px;
+}
+.sw-ride {
+  background: var(--accent);
+}
+.sw-raw {
+  width: 16px;
+  height: 2px;
+  background: radial-gradient(circle, #6741d9 2.5px, transparent 3px) 0 50% / 8px 6px repeat-x, #6741d9;
+}
+.sw-train {
+  height: 6px;
+  border-radius: 0;
+  background: repeating-linear-gradient(90deg, #2b2724 0 5px, #fff 5px 9px);
+  box-shadow: 0 0 0 1px #2b2724;
+}
+.sw-ferry {
+  height: 6px;
+  background: radial-gradient(circle, #1971c2 2px, transparent 2.5px) 0 50% / 7px 6px repeat-x;
+}
+.sw-flight {
+  height: 2px;
+  background: repeating-linear-gradient(90deg, #5f3dc4 0 6px, transparent 6px 10px);
+}
+.sw-camp {
+  width: auto;
+  height: auto;
+  font-size: 12px;
+}
+@media (max-width: 560px) {
+  .legend {
+    display: none;
+  }
+}
+
+.stay-pin {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: #fffdf8;
+  color: #1f1b17;
+  border: 2px solid #1f1b17;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  transition: transform 0.15s ease;
+}
+.stay-pin.is-active {
+  background: #e8590c;
+  border-color: #fff;
+  color: #fff;
+  transform: scale(1.15);
+}
+.stay-pin[data-kind="airbnb"] {
+  border-radius: 8px;
+}
+.photo-pin {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  cursor: zoom-in;
+  transition: transform 0.15s ease;
+}
+.photo-pin:hover {
+  transform: scale(1.6);
+}
+.photo-pin img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.plane-pin {
+  color: #5f3dc4;
+  filter: drop-shadow(0 0 1.5px #fff) drop-shadow(0 0 1.5px #fff);
+  cursor: pointer;
+}
+.leaflet-container {
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+/* Leaflet makes route lines focusable, and the browser's focus ring is
+   drawn around a line's whole bounding box after a click. Days are
+   reachable by keyboard from the sidebar, so drop it on paths; markers
+   keep a ring for keyboard focus only. */
+.leaflet-container path.leaflet-interactive:focus {
+  outline: none;
+}
+.leaflet-container .leaflet-marker-icon:focus:not(:focus-visible) {
+  outline: none;
+}
+.route-tooltip {
+  font-size: 12px;
+}
+.stay-popup {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 13px;
+}
+
+/* ---------- lightbox (yet-another-react-lightbox) ---------- */
+.yarl__root {
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+.yarl__slide_title {
+  font-size: 15px;
+  font-weight: 600;
+}
+.yarl__slide_description {
+  font-size: 12.5px;
+  opacity: 0.8;
+}
+/* Each slide fills the screen; the tiny inline version of the photo sits
+   behind it at the photo's own shape until the full image has loaded. */
+.lb-slide {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  container-type: size;
+}
+/* Same box as the image's object-fit: contain. */
+.lb-blur {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: min(100cqw, 100cqh * var(--ar));
+  aspect-ratio: var(--ar);
+  background-size: cover;
+  filter: blur(8px);
+}
