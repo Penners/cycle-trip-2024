@@ -1,12 +1,9 @@
-import importedData from "@/data/output.json";
-import { Activities } from "@/types";
-import dynamic from "next/dynamic";
+import TourExplorer from "@/components/TourExplorer";
+import { loadJournal } from "@/lib/journal";
+import tourData from "@/data/tour.json";
+import type { Tour } from "@/lib/types";
 
-const NoSSR = dynamic(() => import("@/components/map"), {
-  ssr: false,
-  loading: () => <p>loading...</p>,
-});
-
-export default async function Home() {
-  return <NoSSR data={importedData as Activities[]} />;
+export default function Home() {
+  const tour = tourData as unknown as Tour;
+  return <TourExplorer tour={tour} journal={loadJournal()} />;
 }
