@@ -9,6 +9,6 @@ export const COLORS = {
   ferry: "#1971c2",
   flight: "#5f3dc4",
   ink: "#1f1b17",
-  offTour: "#868e96", // UK legs to and from the start
+  offTour: "#868e96", // legs to and from the start
   raw: "#6741d9", // the phone's original fixes
 };

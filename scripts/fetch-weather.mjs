@@ -12,6 +12,10 @@ const cells = new Set(stays.map((s) => cellOf(s.lat, s.lon)));
 for (const t of buildTracks()) for (const p of t.pts) cells.add(cellOf(p.lat, p.lon));
 
 const dates = buildTracks().map((t) => t.date).sort();
+if (!dates.length) {
+  console.log("No rides in gpxdata/ yet — nothing to fetch.");
+  process.exit(0);
+}
 const start = dates[0];
 // One extra day so the last night's low (into the next morning) is covered.
 const end = new Date(new Date(dates.at(-1)).getTime() + 86400e3).toISOString().slice(0, 10);

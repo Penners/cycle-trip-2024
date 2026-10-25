@@ -152,7 +152,7 @@ export default function TourExplorer({ tour, journal }: Props) {
             </button>
           )}
           </div>
-          <Legend showRaw={showRaw} />
+          <Legend showRaw={showRaw} showFlight={tour.days.some((d) => d.segments.some((s) => s.kind === "flight"))} />
         </div>
         <div className="elevation-panel">
           <div className="elevation-head">
@@ -181,7 +181,9 @@ export default function TourExplorer({ tour, journal }: Props) {
                 onOpenPhoto={openPhoto}
               />
             ) : (
-              <div className="elevation-empty">{selectedDay.segments.some((s) => s.offTour) ? "Getting to the start: not part of the tour's charts." : "No riding today."}</div>
+              <div className="elevation-empty">
+                {selectedDay.noRide ?? (selectedDay.segments.some((s) => s.offTour) ? "Getting to the start: not part of the tour's charts." : "No riding today.")}
+              </div>
             )
           ) : (
             <ElevationChart
@@ -231,11 +233,11 @@ function Overview({
   return (
     <>
       <header className="masthead">
-        <div className="eyebrow">4 – 15 April 2024 · Mike, Ronaldo &amp; me</div>
+        <div className="eyebrow">{[tour.meta.dates, tour.meta.riders].filter(Boolean).join(" · ")}</div>
         <h1>
-          Flanders <span className="arrow">→</span> Holland
+          {tour.meta.from} <span className="arrow">→</span> {tour.meta.to}
         </h1>
-        <p className="lede">Twelve days from Dunkirk through Bruges, Antwerp and Brabant to Utrecht and Delft, then back down the Zeeland coast, with trains and ferries at either end.</p>
+        {tour.meta.lede && <p className="lede">{tour.meta.lede}</p>}
       </header>
 
       <dl className="stats">
@@ -388,6 +390,11 @@ function DayDetail({
                     Ride · {fmtTime(s.start)}–{fmtTime(s.end)}
                   </span>
                   <span className="leg-km">{fmtKm(s.km)} km</span>
+                  {s.stravaId && (
+                    <a className="leg-link" href={`https://www.strava.com/activities/${s.stravaId}`} target="_blank" rel="noreferrer">
+                      Strava ↗
+                    </a>
+                  )}
                 </>
               ) : (
                 <>
@@ -484,7 +491,7 @@ function Stat({ label, value, unit }: { label: string; value: string; unit: stri
   );
 }
 
-function Legend({ showRaw }: { showRaw: boolean }) {
+function Legend({ showRaw, showFlight }: { showRaw: boolean; showFlight: boolean }) {
   return (
     <div className="legend" aria-label="Map legend">
       <span className="legend-item">
@@ -501,6 +508,11 @@ function Legend({ showRaw }: { showRaw: boolean }) {
       <span className="legend-item">
         <span className="sw sw-ferry" /> Ferry
       </span>
+      {showFlight && (
+        <span className="legend-item">
+          <span className="sw sw-flight" /> Flight
+        </span>
+      )}
       <span className="legend-item">
         <span className="sw sw-camp">⛺</span> Overnight
       </span>

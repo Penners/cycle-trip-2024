@@ -6,8 +6,10 @@ export type Segment =
   | {
       kind: "ride";
       id: string;
-      /** Getting to/from the tour (UK riding): drawn, not counted. */
+      /** Getting to/from the tour: drawn, not counted. */
       offTour?: boolean;
+      /** The Strava activity, when the ride is exactly one. */
+      stravaId?: string;
       date: string;
       start: string;
       end: string;
@@ -21,11 +23,12 @@ export type Segment =
   | {
       kind: "train" | "ferry" | "flight";
       id: string;
-      /** Getting to/from the tour (the UK trains): drawn, not counted. */
+      /** Getting to/from the tour: drawn, not counted. */
       offTour?: boolean;
       date: string;
-      start: string;
-      end: string;
+      /** Approximate local times, when the config gives them. */
+      start?: string;
+      end?: string;
       name: string;
       note: string;
       km: number;
@@ -46,7 +49,7 @@ export type Photo = {
   /** Tiny inline image (data URI) shown blurred while the full photo loads. */
   blur: string;
   caption: string;
-  /** Who took it, when it isn't Penry (e.g. Mike's Instagram stories). */
+  /** Who took it, when it's someone else's photo. */
   credit?: string;
   km: number | null;
 };
@@ -90,6 +93,8 @@ export type Day = {
   date: string;
   title: string;
   subtitle: string;
+  /** Shown in place of the elevation chart on a day without riding. */
+  noRide?: string;
   stats: {
     rideKm: number;
     trainKm: number;
@@ -119,7 +124,19 @@ export type Stay = {
   lon: number;
 };
 
+/** Masthead text and page metadata, from TOUR in scripts/tour.config.mjs. */
+export type TourMeta = {
+  title: string;
+  from: string;
+  to: string;
+  dates: string;
+  riders: string;
+  lede: string;
+  description: string;
+};
+
 export type Tour = {
+  meta: TourMeta;
   totals: {
     rideKm: number;
     trainKm: number;

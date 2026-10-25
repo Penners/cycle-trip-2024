@@ -2,9 +2,32 @@
 // (routes, distances, elevation, estimated fill-ins, photo positions) is
 // derived from gpxdata/ and photos/ by tracks.mjs and build-data.mjs.
 
+// Masthead text and page metadata.
+export const TOUR = {
+  title: "Bristol → Flanders → Holland · Cycle Trip 2024", // browser tab / link previews
+  from: "Flanders", // the big "From → To" heading
+  to: "Holland",
+  dates: "4 – 15 April 2024",
+  riders: "Mike, Ronaldo & me",
+  lede: "Twelve days from Dunkirk through Bruges, Antwerp and Brabant to Utrecht and Delft, then back down the Zeeland coast, with trains and ferries at either end.",
+  description: "An interactive map of an April 2024 bike tour through Belgium and the Netherlands, with the gaps in the recordings filled by best-guess routes.",
+};
+
 // The phone logged everything in UK time (BST), even on the continent,
 // so all times here — and on the site — are UK time.
 export const TIMEZONE_OFFSET_HOURS = 1;
+export const TIME_ZONE = "Europe/London"; // the same zone, for the site's clock times
+
+// How the rides were recorded. "strava": Strava's own recordings, whose
+// distance and altitude are already clean, so they're counted the way
+// Strava counts them. "phone": raw phone GPS (Google Fit/Health exports),
+// whose altitude is despiked and smoothed hard before climbing is counted.
+export const RECORDINGS = "phone";
+
+// Route the unrecorded stretches (sparse jumps inside rides, and riding
+// between rides, stays and transfers) with BRouter: `npm run data:routes`.
+// Needs depart/arrive times on every transfer.
+export const FILL_GAPS = true;
 
 // The camera (moto g9 plus) names photos IMG_YYYYMMDD_HHMMSS in its own
 // local time, and switched to continental time on landing in France.
@@ -75,6 +98,10 @@ export const transfers = [
   { id: "train-dover-london", offTour: true, date: "2024-04-15", depart: "17:30", arrive: "18:40", mode: "train", name: "Dover Priory → St Pancras", note: "Southeastern high speed via Ashford International", from: STN.doverPriory, to: STN.stPancras, via: [STN.ashford] },
   { id: "train-london-bristol", offTour: true, date: "2024-04-15", depart: "19:30", arrive: "21:10", mode: "train", name: "London Paddington → Bristol", note: "GWR home", from: STN.paddington, to: STN.bristol, via: [] },
 ];
+
+// Riding entirely in the UK (Bristol, across London, the Dover hops) is
+// getting to and from the tour: drawn, but not counted, like the UK trains.
+export const isOffTour = (pts) => pts.every((p) => p.lon < 1.6);
 
 // Per-day headline used in the sidebar and map tooltips.
 export const dayTitles = {

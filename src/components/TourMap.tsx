@@ -51,11 +51,12 @@ function photoIcon(photo: Photo) {
   });
 }
 
-// The flight and ferry would zoom the map out to Bristol, so the
-// overview frames only the overland route.
-// The UK legs (offTour) would pull the frame back to Bristol too.
+// Flights, ferries and legs to and from the start (offTour) would zoom the
+// map out towards home, so the overview frames only the tour itself.
 const isOverland = (s: Segment) => s.kind !== "flight" && s.kind !== "ferry" && !s.offTour;
-const allBounds = (days: Day[]) => L.latLngBounds(days.flatMap((d) => d.segments.filter(isOverland).flatMap((s) => s.coords)));
+// Before any rides are added there's nothing to frame: show Western Europe.
+const boundsOf = (pts: LatLon[]) => (pts.length ? L.latLngBounds(pts) : L.latLngBounds([42, -5], [55, 12]));
+const allBounds = (days: Day[]) => boundsOf(days.flatMap((d) => d.segments.filter(isOverland).flatMap((s) => s.coords)));
 
 const PLANE = `<svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M12 2c.8 0 1.4.9 1.4 2v5.2l7.6 4.4v2l-7.6-2.3v4.6l2.2 1.7V21L12 20l-3.6 1v-1.4l2.2-1.7v-4.6L3 15.6v-2l7.6-4.4V4c0-1.1.6-2 1.4-2z"/></svg>`;
 
@@ -80,13 +81,13 @@ function FitToSelection({ tour, selectedDayId }: { tour: Tour; selectedDayId: st
     let bounds: L.LatLngBounds;
     if (day && day.segments.length) {
       const segs = day.segments.some(isOverland) ? day.segments.filter(isOverland) : day.segments;
-      bounds = L.latLngBounds(segs.flatMap((s) => s.coords));
+      bounds = boundsOf(segs.flatMap((s) => s.coords));
     } else if (day) {
       // Rest day: frame the photos and where we slept.
       const stay = tour.stays.find((s) => s.id === day.stayId);
       const pts: LatLon[] = day.photos.filter((p) => p.lat != null).map((p) => [p.lat!, p.lon!]);
       if (stay) pts.push([stay.lat, stay.lon]);
-      bounds = L.latLngBounds(pts);
+      bounds = boundsOf(pts);
     } else {
       bounds = allBounds(tour.days);
     }

@@ -1,13 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Inter } from "next/font/google";
 import "./globals.css";
+import tourData from "@/data/tour.json";
 
 const display = Fraunces({ subsets: ["latin"], variable: "--font-display", axes: ["opsz", "SOFT"] });
 const sans = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "Bristol → Flanders → Holland · Cycle Trip 2024",
-  description: "An interactive map of an April 2024 bike tour through Belgium and the Netherlands, with the gaps in the recordings filled by best-guess routes.",
+  title: tourData.meta.title,
+  description: tourData.meta.description,
 };
 
 export const viewport: Viewport = {

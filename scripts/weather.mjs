@@ -23,8 +23,10 @@ function bearing(a, b) {
 }
 
 export function loadWeather() {
-  if (!fs.existsSync("data/weather.json")) throw new Error("Missing data/weather.json — run npm run data:weather");
-  const w = JSON.parse(fs.readFileSync("data/weather.json", "utf8"));
+  // No weather yet (e.g. before the first rides are added): every lookup
+  // comes back empty and the site just leaves the weather out.
+  if (!fs.existsSync("data/weather.json")) console.warn("⚠ No data/weather.json — run npm run data:weather");
+  const w = fs.existsSync("data/weather.json") ? JSON.parse(fs.readFileSync("data/weather.json", "utf8")) : { start: "1970-01-01", cells: {} };
   const t0 = new Date(`${w.start}T00:00:00Z`).getTime();
   /** Value of `v` at (lat, lon, ms), interpolated between hours. */
   const at = (v, lat, lon, ms) => {

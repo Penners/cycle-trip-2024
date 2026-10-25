@@ -2,7 +2,7 @@
 
 An interactive map of an April 2024 bike tour around the Low Countries: Bristol → Dover by train, ferry to Dunkirk, then Bruges, Antwerp, Brabant, Arnhem, Utrecht, Gouda, Delft and the Zeeland coast, and back via Bruges and Dunkirk. It has day-by-day routes, overnight pins, an elevation profile, and train and ferry legs drawn differently from the riding.
 
-Built on the same framework as [cycle-tour-2026](https://github.com/Penners/cycle-tour-2026) (Next.js App Router, Leaflet and free, keyless basemaps).
+Built on the same framework as [cycle-tour-2026](https://github.com/Penners/cycle-tour-2026) (Next.js App Router, Leaflet and free, keyless basemaps). The code in `scripts/` and `src/` is shared with the other tour sites, and every tour detail lives in [scripts/tour.config.mjs](scripts/tour.config.mjs), so improve the code in one repo and copy it across. `npm run framework:check` lists anything that has drifted.
 
 ## Run it
 

@@ -15,6 +15,7 @@
     "data:routes": "node scripts/fetch-routes.mjs",
     "data:weather": "node scripts/fetch-weather.mjs",
     "data:photos": "node scripts/build-photos.mjs",
+    "framework:check": "node scripts/check-framework.mjs",
     "postinstall": "node scripts/copy-maplibre-worker.mjs"
   },
   "dependencies": {
