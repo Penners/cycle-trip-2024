@@ -7,6 +7,7 @@ import ElevationChart, { type ChartMarker } from "./ElevationChart";
 import Lightbox from "./Lightbox";
 import type { Band, Day, Journal, LatLon, Photo, ProfilePoint, Tour } from "@/lib/types";
 import { fmtDate, fmtDuration, fmtInt, fmtKm, fmtTime } from "@/lib/format";
+import { headlineStats } from "@/lib/stats";
 
 const TourMap = dynamic(() => import("./TourMap"), {
   ssr: false,
@@ -241,15 +242,9 @@ function Overview({
       </header>
 
       <dl className="stats">
-        <Stat label="Ridden" value={fmtInt(Math.round(t.rideKm))} unit="km" />
-        <Stat label="By train" value={fmtInt(Math.round(t.trainKm))} unit="km" />
-        <Stat label="Moving" value={fmtDuration(t.movingSeconds).replace(/ \d+m$/, "")} unit="" />
-        <Stat label="Climbed" value={fmtInt(t.gain)} unit="m" />
-        <Stat label="Descended" value={fmtInt(t.loss)} unit="m" />
-        <Stat label="Highest" value={fmtInt(t.maxEle)} unit="m" />
-        <Stat label="Riding days" value={String(t.ridingDays)} unit="" />
-        <Stat label="Nights out" value={String(t.nights)} unit="" />
-        <Stat label="Photos" value={String(t.photos)} unit="" />
+        {headlineStats(t).map((s) => (
+          <Stat key={s.label} {...s} />
+        ))}
       </dl>
 
       <h2 className="section-title">The days</h2>
